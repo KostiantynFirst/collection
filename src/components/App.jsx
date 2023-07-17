@@ -33,14 +33,21 @@ export class App extends Component {
   }
 };
 
+deleteMaterial = async id => {
+  await API.deleteMaterial(id);
+  this.setState(state => ({
+    materials: state.materials.filter(material => material.id !== id)
+  }));
+}
+
   render() {
-    const { materials } = this.state;
+    const { materials, isLoading, error } = this.state;
     return (
       <>
-      <MaterialEditor   
-        onSubmit={this.addMaterial} 
-      />
-      <Materials items={materials}/>
+      {error && <p>Something goes wrong</p>}
+      <MaterialEditor onSubmit={this.addMaterial} />
+      {isLoading ? "Loading..." : <Materials items={materials} 
+      onDelete={this.deleteMaterial}/>}
       </>
     )
   }
