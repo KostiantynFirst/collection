@@ -21,7 +21,7 @@ export class App extends Component {
     }
   }
 
-   addMaterial = async(values) => {
+addMaterial = async(values) => {
 
     try {
       const material = await API.addMaterial(values);
@@ -29,21 +29,35 @@ export class App extends Component {
         materials: [...state.materials, material],
       }))
     } catch (error) {
+      this.setState({ error: true, isLoading: false })
       console.log(error);
   }
 };
 
 deleteMaterial = async id => {
-  await API.deleteMaterial(id);
+  try {
+    await API.deleteMaterial(id);
+    this.setState(state => ({
+      materials: state.materials.filter(material => material.id !== id)
+    }));
+  } catch (error) {
+    this.setState({ error: true})
+    console.log(error);
+  }
+}
+
+updateMaterial = async fields => {
+  const updatedMaterial = await API.updateMaterial(fields);
   this.setState(state => ({
-    materials: state.materials.filter(material => material.id !== id)
-  }));
+    materials: state.materials.map(material => material.id === fields.id ? updatedMaterial : material)
+  }))
 }
 
   render() {
     const { materials, isLoading, error } = this.state;
     return (
       <>
+      <button onClick={this.updateMaterial}>XXX</button>
       {error && <p>Something goes wrong</p>}
       <MaterialEditor onSubmit={this.addMaterial} />
       {isLoading ? "Loading..." : <Materials items={materials} 
