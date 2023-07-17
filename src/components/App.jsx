@@ -1,14 +1,38 @@
 import { Component } from "react";
 import { MaterialEditor } from "./MaterialEditor";
+import * as API from 'services/api'
+import { Materials } from "./Materials";
 
 export class App extends Component {
   state = { 
-    materisls: [];
+    materials: [],
+    isLoading: false,
   }
-  
+
+   addMaterial = async(values) => {
+
+    try {
+      this.setState({isLoading: true})
+      const material = await API.addMaterial(values);
+      this.setState(state => ({
+        materials: [...state.materials, material],
+        isLoading: false,
+      }))
+    } catch (error) {
+      console.log(error);
+  }
+};
+
   render() {
+    const { isLoading, materials } = this.state;
     return (
-      <MaterialEditor onSubmit={console.log} />
+      <>
+      {isLoading && <div>Loading...</div>}
+      <MaterialEditor   
+        onSubmit={this.addMaterial} 
+      />
+      <Materials items={materials}/>
+      </>
     )
   }
 }
