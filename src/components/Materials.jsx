@@ -1,10 +1,11 @@
-export const Materials = ({items, onDelete}) => {
+import { MaterialItem } from "./MaterialItem"
+export const Materials = ({items, ...otherProps}) => {
     return <ul>
         {items.map(item => (
             <li key={item.id}>
-                <p>Title: {item.title}</p>
-                <p>Link: {item.link}</p>
-                <button type="button" onClick={() => onDelete(item.id)}>Delete</button>
+                <MaterialItem 
+                    item={item} 
+                    {...otherProps}/>
             </li>
             ))}
     </ul>
