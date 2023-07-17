@@ -7,16 +7,26 @@ export class App extends Component {
   state = { 
     materials: [],
     isLoading: false,
+    error: false,
+  }
+
+  async componentDidMount() {
+    try {
+      this.setState({ isLoading: true });
+      const materials = await API.getMaterial();
+      this.setState({ materials, isLoading: false });
+    } catch (error) {
+      this.setState({ error: true, isLoading: false })
+      console.log(error);
+    }
   }
 
    addMaterial = async(values) => {
 
     try {
-      this.setState({isLoading: true})
       const material = await API.addMaterial(values);
       this.setState(state => ({
         materials: [...state.materials, material],
-        isLoading: false,
       }))
     } catch (error) {
       console.log(error);
@@ -24,10 +34,9 @@ export class App extends Component {
 };
 
   render() {
-    const { isLoading, materials } = this.state;
+    const { materials } = this.state;
     return (
       <>
-      {isLoading && <div>Loading...</div>}
       <MaterialEditor   
         onSubmit={this.addMaterial} 
       />
